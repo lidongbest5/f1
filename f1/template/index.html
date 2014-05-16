@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="/f1/static/style/common.css" />
+<link rel="stylesheet" type="text/css" href="/f1/static/style/index.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="js/DD_belatedPNG.js"></script>
+<script type="text/javascript" >
+    DD_belatedPNG.fix('.png');
+</script>
+<![endif]-->
+<title>F1竞猜活动</title>
+</head>
+<body>
+	<div class="container">
+		<div class="category">
+			<a href="/f1/races/1/"><div id="Australia"></div></a>
+				<a href="/f1/races/2/"><div id="Malaysia"></div></a>
+				<a href="/f1/races/3/"><div id="China"></div></a>
+				<a href="/f1/races/4/"><div id="Bahrain"></div></a>
+				<a href="/f1/races/5/"><div id="Spain"></div></a>
+				<a href="/f1/races/6/"><div id="Monaco"></div></a>
+				<a href="/f1/races/7/"><div id="Canada"></div></a>
+				<a href="/f1/races/8/"><div id="GreatBritain"></div></a>
+				<a href="/f1/races/9/"><div id="Germany"></div></a>
+				<a href="/f1/races/10/"><div id="Hungary"></div></a>
+				<a href="/f1/races/11/"><div id="Belgium"></div></a>
+				<a href="/f1/races/12/"><div id="Italy"></div></a>
+				<a href="/f1/races/13/"><div id="Singapore"></div></a>
+				<a href="/f1/races/14/"><div id="Korea"></div></a>
+				<a href="/f1/races/15/"><div id="Japan"></div></a>
+				<a href="/f1/races/16/"><div id="India"></div></a>
+				<a href="/f1/races/17/"><div id="AbuDhabi"></div></a>
+				<a href="/f1/races/18/"><div id="UnitedStates"></div></a>
+				<a href="/f1/races/19/"><div id="Brazil"></div></a>
+				<a href="/f1/total/" class="atotal"><div class="total">总积分</div></a>
+		</div>
+		<div class="main">
+			{% if status > 0 and status < 6 %}
+			<div class="rule">
+				<div class="rule-logo"></div>
+				<div class="rule-bg"></div>
+				<div class="rule-content">
+					<p>{{ content.rule|safe }}</p>
+				</div>
+			</div>
+			<div class="content">
+				<div class="content-top">
+					<div class="content-logo"></div>
+					<div class="content-bg"></div>
+					{% if status != 5 %}<p>当前为<span>{{ races.name }}</span>本站截止时间为<span>{{ races.time|date:"Y年n月j日H:i" }}</span></p>{% endif %}	
+			</div>
+				{% if status == 1 %}
+				<div class="content-main">
+					<div class="content-main-bg"></div>
+					<div class="content-main-container">
+						<table>
+							<tbody>
+								<tr class="single"><th width="116px;">车手</th><th width="143px;">车队</th><th width="69px;">奖励系数</th><th width="81px;">竞猜</th><th width="57px;">确定</th></tr>
+								{% for item in rate %}
+									<tr class="{% if forloop.counter|divisibleby:"2" %}single{% else %}double{% endif %} {% if forloop.counter < 4 %}f-three{% endif %}"><td><i>{{ forloop.counter }}</i>{{ item.cname }}</td><td>{{ item.team }}</td><td>1:{{ item.rate }}</td><td><div class="rate-container"><a class="rate-left" href="javascript:;">-</a><input type="text" class="rate-middle" value="0"><a class="rate-right" href="javascript:;">+</a></div></td><td><a href="javascript:;" class="submit" driver="{{ item.id }}">确定</a></td></tr>	
+								{% endfor %}						
+							</tbody>
+						</table>
+					</div>
+					<a class="submit-all">全部确定</a>
+					<span class="submit-info"></span>
+				</div>
+				{% elif status == 5 %}
+				<div class="content-main">
+					<div class="content-main-bg"></div>
+					<div class="content-main-container">
+						<table>
+							<tbody>
+								<tr class="single"><th>时间</th><th>竞猜场次</th><th>竞猜对象</th><th>竞猜分值</th><th>竞猜时奖励系数</th><th>剩余积分</th></tr>
+								{% for item in data %}
+									<tr class="{% if forloop.counter|divisibleby:"2" %}single{% else %}double{% endif %}"><td>{{ item.time|date:"Y-n-j" }}</td><td>{{ item.raceName }}</td><td>{{ item.driverName }}</td><td>{{ item.score|floatformat:"1" }}</td><td>{{ item.rate }}</td><td>{{ item.leftScore|floatformat:"1" }}</td></tr>	
+								{% endfor %}						
+							</tbody>
+						</table>
+					</div>
+					<span class="submit-info"></span>
+				</div>
+				{% elif status = 2 %}
+				<div class="content-main">
+					<div class="content-main-bg"></div>
+					<div class="content-main-container">
+						即将开始
+					</div>
+				</div>
+				{% elif status = 3 %}
+				<div class="content-main">
+					<div class="content-main-bg"></div>
+					<div class="content-main-container">
+						暂无数据
+					</div>
+				</div>
+				{% elif status = 4 %}
+				<div class="content-main">
+					<div class="content-main-bg"></div>
+					<div class="content-main-container">
+						已截止，竞猜结果即将公布
+					</div>
+				</div>
+				{% endif %}
+			</div>
+			<div class="user">
+				<div class="user-top"></div>
+				{% if user.islogin %}
+					<div class="user-main">
+						<div class="user-info">
+							<img src="/f1/static/images/avatar.png">
+							<div class="user-name">欢迎您，<br>{{ user.userid }}</div>
+						</div>
+						<div class="guess-info"><p>总积分：<span>{{ user.score }}</span>分</p><p>排&nbsp;&nbsp;&nbsp;名：<span>{{ user.index }}</span>名</p>
+							{% if user.sign %}
+							<a class="signed">已签到</a>
+							{% else %}
+							<a class="sign">签到</a>
+							{% endif %}
+						</div>
+						<a href="/f1/history/" class="history">个人历史记录</a>
+						<div><a href="javascript:;" class="logout">退出</a><a href="javascript:;" class="change">修改个人信息</a><a href="https://passport.sohu.com/web/updateInfo.action?modifyType=password" target="_blank" class="forgetpwd">修改密码</a></div>
+<div class="pop">
+							<p>姓名：<input type="text" class="name"></p>
+							<p>手机：<input type="text" class="phone"></p>
+							<p>地址：<input type="text" class="address"></p>
+							<p>邮编：<input type="text" class="code"></p>
+							<p><input type="submit" value="确定" class="pop-save"><input type="submit" value="取消" class="pop-cancel"></p>
+						</div>
+</div>
+				{% else %}
+					<div class="user-main">
+						<p>电子邮件</p>
+						<input type="text" class="eml" name="userid">
+						<p>密码</p>
+						<input type="password" class="pwd" name="password">
+						<div class="user-option"><span></span><a href="http://passport.sohu.com/web/recover.jsp" target="_blank">忘记密码?</a></div>
+						<div class="user-btn"><a href="javascript:;" class="login">登录<i></i></a><a href="https://passport.sohu.com/web/dispatchAction.action?ru=http://f1.sohu.com/s2013/game/" target="_parent" class="register">立即注册</a></div>
+					</div>
+				{% endif %}
+				<div class="user-contact">
+					<p class="contact">联系方式:</p>
+					<p>{{ content.contact }}</p>
+				</div>
+			</div>
+			{% elif status == 0 %}
+			<div class="content-rate">
+				<div class="content-top">
+					<div class="content-logo"></div>
+					<div class="content-bg"></div>
+					<p class="champion">{{ races.name }}冠军：{{ races.championName }}</p>
+				</div>
+				<div class="content-main">
+					<div class="content-main-bg"></div>
+					<div class="content-main-container">
+						<table>
+							<tbody>
+								<tr class="single"><th>用户名</th><th>所下分值</th><th>所获积分</th><th>总积分</th></tr>
+								{% for item in data  %}
+									<tr class="{% if forloop.counter|divisibleby:"2" %}single{% else %}double{% endif %} {% if forloop.counter < 4 %}f-three{% endif %}"><td><i>{{ forloop.counter }}</i>{{ item.userid }}</td><td>{{ item.score }}</td><td>{{ item.totalScore }}</td><td>{{ item.total|floatformat:"1" }}</td></tr>
+								{% endfor %}						
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			{% elif status == 6 %}
+			<div class="content-rate">
+				<div class="content-top">
+					<div class="content-logo"></div>
+					<div class="content-bg"></div>
+				</div>
+				<div class="content-main">
+					<div class="content-main-bg"></div>
+					<div class="content-main-container">
+						<table>
+							<tbody>
+								<tr class="single"><th>用户名</th><th>总积分</th></tr>
+								{% for item in data  %}
+									<tr class="{% if forloop.counter|divisibleby:"2" %}single{% else %}double{% endif %} {% if forloop.counter < 4 %}f-three{% endif %}"><td><i>{{ forloop.counter }}</i>{{ item.name }}</td><td>{{ item.score|floatformat:"1" }}</td></tr>	
+								{% endfor %}					
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+<script>
+	var races = {{ race_id }};
+	{% if user.islogin %}
+		var userid = '{{ user.userid }}',
+			score = {{ user.score }};
+	{% else %}
+		var userid = null,
+			score = null;
+	{% endif %}
+</script>
+<script src="/f1/static/js/jquery.js"></script>
+<script src="/f1/static/js/index.js"></script>
+</body>
+</html>
+

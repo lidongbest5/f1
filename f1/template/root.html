@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="/f1/static/style/common.css" />
+<style>
+p{margin: 10px;}
+h2{padding-bottom: 3px;border-bottom: 1px solid #e5e5e5;padding-left: 10px}
+textarea{width: 300px;height: 200px;}
+.list{width: 800px;height: 140px;margin-left: 10px;overflow: scroll;position: absolute;top: 80px;left: 300px;}
+.list tr{float:left;}
+.info{display: none;}
+th,td{padding:3px;border:1px solid #eeeeee;}
+.nav{height:50px;}
+.nav a{float:left;margin: 5px 10px;}
+</style>
+<!--[if IE 6]>
+<script type="text/javascript" src="js/DD_belatedPNG.js"></script>
+<script type="text/javascript" >
+    DD_belatedPNG.fix('.png');
+</script>
+<![endif]-->
+<title>F1竞猜活动</title>
+</head>
+<body>
+	<div class="nav">
+		<h2>导航</h2>
+		<a href="#hash1">冠军输入</a>
+		<a href="#hash6">结果预览</a>
+		<a href="#hash2">游戏规则</a>
+		<a href="#hash3">联系方式</a>
+		<a href="#hash4">查询用户</a>
+		<a href="#hash5">查询用户历史记录</a>
+	</div>
+	<div>
+		<h2 id="hash1">冠军输入</h2>
+		<p>请输入分站号<input type="text" class="raceid"></p>
+		<p>请输入冠军id<input type="text" class="chamid"></p>
+		<p>请输入冠军姓名<input type="text" class="chamname"></p>
+		<p><input type="submit" value="提交" class="btn1"></p>
+		<div class="list">
+			<table>
+				<tbody>
+					{% for item in data %}
+						<tr><td>{{item.id}}</td><td>{{item.cname}}</td></tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div>   
+        	<h2 id="hash6">结果预览</h2>
+		<a href="/f1/showPre/" target="_blank" style="padding-left:10px;">查看预览</a>
+		<p><input type="submit" value="确定提交" class="btn6"></p>
+        </div>
+	<div>
+		<h2 id="hash2">游戏规则</h2>
+		<p>请输入游戏规则<br/><textarea class="rule"></textarea></p>
+		<p><input type="submit" value="提交" class="btn2"></p>
+	</div>
+	<div>
+		<h2 id="hash3">联系方式</h2>
+		<p>请输入联系方式<br/><textarea class="contact"></textarea></p>
+		<p><input type="submit" value="提交" class="btn3"></p>
+	</div>
+	<div>
+		<h2 id="hash4">查询用户</h2>
+		<p>请输入用户邮箱<input type="text" class="email"></p>
+		<p><input type="submit" value="提交" class="btn4"></p>
+		<div class="info">
+			<p>用户姓名：<span></span></p>
+			<p>用户电话：<span></span></p>
+			<p>用户地址：<span></span></p>
+			<p>用户邮编：<span></span></p>
+		</div>
+	</div>
+	<div>
+		<h2 id="hash5">查询用户历史记录</h2>
+		<p>请输入用户邮箱<input type="text" class="his"></p>
+		<p><input type="submit" value="提交" class="btn5"></p>
+		<div class="history">
+			<table>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+<script src="/f1/static/js/jquery.js"></script>
+<script>
+(function($){
+	$('.btn1').click(function(){
+		$.ajax({
+			url : '/f1/setResult/',
+			type : 'POST',
+			data : {'raceid':$(this).parent().parent().find('.raceid').val(),'chamid':$(this).parent().parent().find('.chamid').val(),'chamname':$(this).parent().parent().find('.chamname').val()},
+			success : function(){
+				alert("设置成功！");
+			},
+			error : function(){
+				alert("网络错误，请重试！");
+			}
+		});
+	});
+	$('.btn2').click(function(){
+		$.ajax({
+			url : '/f1/setContent/',
+			type : 'POST',
+			data : {'data':$(this).parent().parent().find('textarea').val()},
+			success : function(){
+				alert("设置成功！");
+			},
+			error : function(){
+				alert("网络错误，请重试！");
+			}
+		});
+	});
+	$('.btn3').click(function(){
+		$.ajax({
+			url : '/f1/setContact/',
+			type : 'POST',
+			data : {'data':$(this).parent().parent().find('textarea').val()},
+			success : function(){
+				alert("设置成功！");
+			},
+			error : function(){
+				alert("网络错误，请重试！");
+			}
+		});
+	});
+	$('.btn4').click(function(){
+		$.ajax({
+			url : '/f1/findUser/',
+			type : 'POST',
+			data : {'data':$('.email').val()},
+			success : function(e){
+				if(typeof(JSON) == 'undefined'){
+					data = eval("("+ e +")");
+				}
+				else{
+					data = JSON.parse(e);
+				}
+				$('.info span:eq(0)').html(data.name);
+				$('.info span:eq(1)').html(data.phone);
+				$('.info span:eq(2)').html(data.address);
+				$('.info span:eq(3)').html(data.code);
+				$('.info').show();
+			},
+			error : function(){
+				alert("查询错误，请重新输入");
+			}
+		});
+	});
+	$('.btn5').click(function(){
+		$.ajax({
+			url : '/f1/findHistory/',
+			type : 'POST',
+			data : {'name':$('.his').val()},
+			success : function(e){
+				e = '<tr><th>时间</th><th>竞赛场次</th><th>竞猜对象</th><th>竞猜分值</th><th>竞猜时奖励系数</th><th>剩余积分</th><th>获得积分</th></tr>' + e;
+				$(".history").html(e);
+			},
+			error : function(){
+				alert("网络错误");
+			}
+		});
+	});
+	$('.btn6').click(function(){
+		$.ajax({
+			url : '/f1/setRe/',
+			type : 'POST',
+			success : function(){
+				alert("设置成功");
+			},
+			error : function(){}
+		});
+	});
+})(jQuery)
+</script>
+</body>
+</html>
+
